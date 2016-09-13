@@ -1,0 +1,48 @@
+package logicline.modeleSemantique;
+
+import java.util.Set;
+
+public class Constante extends Formule {
+	
+	static Boolean  constante;
+	
+	public Constante (Boolean constante) {
+		Constante.constante = constante;
+	}
+
+	@Override
+	public String toString() {
+		if (Constante.constante) {
+			return "(T)";
+		}
+		else {
+			return "(⊥)";
+		}
+	}
+
+	@Override
+	public Set<String> variablesLibres() {
+		return null;
+	}
+
+	@Override
+	public Formule substitue(Substitution s) {
+		return this;
+	}
+
+	@Override
+	public boolean valeur() throws VariableLibreException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	public ListeClauses clauses() throws TrueClauseException, FalseClauseException {
+		if (Constante.constante) {
+			throw new TrueClauseException();
+		}
+		else {
+			throw new FalseClauseException();
+		}
+	}
+	
+}

@@ -1,0 +1,465 @@
+Require Import Classical.
+
+Lemma hilbertS (A B C :Prop) :
+  (A -> B -> C) -> (A -> B)-> A-> C.
+Proof.
+intros abc ab a.
+apply abc.
+- exact a.
+- apply ab.
+exact a.
+Qed.
+
+Lemma exo1(P Q :Prop) :
+  P ->(Q -> P).
+Proof.
+intros p q.
+exact p.
+Qed.
+
+Lemma exo2(P Q:Prop) : 
+  P -> (~P -> Q).
+Proof.
+intros p np.
+destruct np.
+exact p.
+Qed.
+
+Lemma exo3(P Q R:Prop) :
+  (P -> Q) -> ((Q -> R) -> (P -> R)).
+Proof.
+intros pq qr p.
+apply qr.
+apply pq.
+exact p.
+Qed.
+
+Lemma exo4(P Q:Prop) :
+  (P -> Q) -> (~Q -> ~P).
+Proof.
+intros pq nq p.
+apply nq.
+apply pq.
+exact p.
+Qed.
+
+Lemma bottom_c(A :Prop) :
+  ((~A) -> False) -> A.
+Proof.
+intros naf.
+apply NNPP.
+intros na.
+destruct naf.
+exact na.
+Qed.
+
+Lemma exo5(P Q: Prop) :
+  (~Q -> ~P) -> ( P -> Q).
+Proof.
+intros nqnp p.
+apply bottom_c.
+intros nq.
+apply nqnp.
+-exact nq.
+-exact p.
+Qed.
+
+Lemma exo6(P :Prop) :
+  ~~P -> P.
+Proof.
+intros nnp.
+apply bottom_c.
+intros np.
+destruct nnp.
+exact np.
+Qed.
+
+Lemma exo7( P :Prop) :
+  P -> ~~P.
+Proof.
+intros p np.
+apply np.
+exact p.
+Qed.
+
+Lemma exo8(P Q R :Prop) :
+  (P -> (Q -> R)) -> (P /\ Q -> R).
+Proof.
+intros pqr pq.
+apply pqr.
+- destruct pq as [p q].
+  exact p.
+- destruct pq as [p q].
+  exact q.
+Qed.
+
+Lemma exo9(P Q R :Prop) :
+  (P /\ Q -> R) -> (P -> (Q -> R)).
+Proof.
+intros pqr p q.
+apply pqr.
+split.
+- exact p.
+- exact q.
+Qed.
+
+Lemma exo10( P :Prop) :
+  P /\~P -> False.
+Proof.
+intros pnp.
+destruct pnp as [p np].
+apply np.
+exact p.
+Qed.
+
+Lemma exo11( P :Prop) :
+  False -> P /\ ~P.
+Proof.
+intros f.
+split.
+- destruct f.
+- intros p.
+exact f.
+Qed.
+
+Lemma exo12( P Q :Prop) :
+  P \/Q <-> ~(~P /\ ~Q).
+Proof.
+split.
+- intros pq npnq.
+  destruct npnq as [np nq].
+  apply np.
+  destruct pq as [p | q].
+  exact p.
+  destruct nq.
+  exact q.
+- intros npnq.
+  apply bottom_c.
+  intros npq.
+  destruct npnq.
+  split.
+  intros p.
+  destruct npq.
+  left.
+  exact p.
+  intros q.
+  destruct npq.
+  right.
+  exact q.
+Qed.
+
+Lemma exo13 (P :Prop) :
+  ~P <-> (P -> False).
+Proof.
+split.
+- intros np p.
+  destruct np.
+  exact p.
+- intros pf p.
+  apply pf.
+  exact p.
+Qed.
+
+Lemma exo14( P Q :Prop) :
+  (P <-> Q ) <-> ( P -> Q ) /\ ( Q -> P).
+Proof.
+split.
+- intros pq.
+  split.
+  destruct pq as [p q].
+  exact p.
+  destruct pq as [p q].
+  exact q.
+- intros ab.
+  split.
+  destruct ab as [a b].
+  exact a.
+  destruct ab as [a b].
+  exact b.
+Qed.
+
+Lemma exemple134( A B C :Prop) :
+  (A /\ B -> C ) <-> (A -> B -> C).
+Proof.
+apply exo14.
+split.
+- intros abc a b.
+  apply abc.
+  split.
+  exact a.
+  exact b.
+- intros abc ab.
+  apply abc.
+  destruct ab as [a b].
+  exact a.
+  destruct ab as [a b].
+  exact b.
+Qed.
+
+Lemma exemple_135(A B C :Prop) : 
+  ( C -> A ) \/ (C -> B) -> (C -> A \/ B).
+Proof.
+intros caocb c.
+destruct caocb as [ca | cb].
+- left.
+  apply ca.
+  exact c.
+- right.
+  apply cb.
+  exact c.
+Qed.
+
+Lemma exemple_136(X :Type) (A B :X -> Prop) :
+  (forall x :X, A x ) \/ (forall x:X, B x) -> (forall x :X, A x \/ B x).
+Proof.
+intros aob x.
+destruct aob as [a | b].
+- left.
+  apply a.
+-right.
+  apply b.
+Qed.
+
+Lemma exemple_137(X:Type)(A B : X -> Prop) :
+  (exists x:X, A x /\ B x) -> (exists x:X, A x) /\ (exists x :X, B x).
+Proof.
+intros aetb.
+destruct aetb as [a b].
+split.
+- exists a.
+  destruct b as [ax bx].
+  exact ax.
+- exists a.
+  destruct b as [ax bx].
+  exact bx.
+Qed.
+
+Lemma exemple_138(A B:Prop) :
+  ~(A /\ B) -> (~A \/ ~B).
+Proof.
+intros nab.
+apply bottom_c.
+intros nanb.
+destruct nab.
+split.
+- apply bottom_c.
+  intros na.
+  destruct nanb.
+  left.
+  exact na.
+- apply bottom_c.
+  intros nb.
+  destruct nanb.
+  right.
+  exact nb.
+Qed.
+
+Lemma exemple_138'(A B:Prop) :
+ ~(A /\ B) -> (~A \/ ~B).
+Proof. 
+intros nab.
+apply exo12.
+intros n.
+apply nab.
+split.
+destruct n as [a b].
+- apply NNPP.
+  exact a.
+- destruct n as [a b].
+  apply NNPP.
+  exact b.
+Qed.
+
+
+Lemma exemple_139(X:Type) :
+  forall (x1 x2:X), x1 =x2 -> x2 = x1.
+Proof.
+intros x1 x2 eq.
+rewrite <- eq.
+reflexivity.
+Qed.
+
+Lemma exemple_140(X:Type) :
+  forall (x1 x2 x3:X),x1 = x2 /\ x2 = x3 -> x1 = x3.
+Proof.
+intros x1 x2 x3 eqs.
+destruct eqs as [eq1 eq2].
+rewrite <- eq2.
+rewrite <- eq1.
+reflexivity.
+Qed.
+
+Definition FALSE: 
+  Prop := forall(P:Prop),P.
+
+Goal FALSE.
+unfold FALSE.
+intros p.
+Abort.
+
+Lemma FALSE_False : 
+ FALSE <-> False.
+Proof.
+split.
+- unfold FALSE.
+  intros p.
+  apply p.
+- unfold FALSE.
+  intros f.
+  intros p.
+  destruct f.
+
+Definition AND (A B :Prop) := forall(P :Prop),(A -> B -> P) -> P.
+
+Definition OR ( A B :Prop) := forall(P :Prop),((A -> P) -> (B -> P) -> P).
+
+Definition EX (A :Type) (P :A -> Prop) := forall(Q :Prop),(forall a, P a -> Q) -> Q.
+
+Definition EQ (A :Type)( a a' :A) := forall (P :A -> Prop), P a -> P a'.
+
+Lemma SPLIT (A B:Prop) : 
+ A -> B -> AND A B.
+Proof.
+intros a b.
+unfold AND.
+intros p abp.
+apply abp.
+- exact a.
+- exact b.
+Qed.
+
+Lemma PROJ1 (A B : Prop) : 
+ AND A B -> A.
+Proof.
+unfold AND.
+intros ab.
+apply ab.
+intros a b.
+exact a.
+Qed.
+
+Lemma PROJ2 (A B : Prop) : 
+ AND A B -> B.
+Proof.
+unfold AND.
+intros ab.
+apply ab.
+intros a b.
+exact b.
+Qed.
+
+Lemma ORINTROL (A B : Prop) : 
+ A -> OR A B.
+Proof.
+unfold OR.
+intros a p ap bp.
+apply ap.
+exact a.
+Qed.
+
+Lemma ORINTROR (A B : Prop) : 
+ B -> OR A B.
+Proof.
+unfold OR.
+intros b p ap bp.
+apply bp.
+exact b.
+Qed.
+
+Lemma AND_and (A B : Prop) : 
+ AND A B <-> A /\ B.
+Proof.
+unfold AND.
+split.
+- intros p.
+  apply p.
+  intros a b.
+  split.
+  exact a.
+  exact b.
+- intros ab p abp.
+  apply abp.
+  destruct ab as [a b].
+  exact a.
+  destruct ab as [a b].
+  exact b.
+Qed.
+
+Lemma OR_or (A B : Prop) : 
+ OR A B <-> A \/ B.
+Proof.
+unfold OR.
+split.
+- intros p.
+  apply p.
+  intros a.
+  left.
+  exact a.
+  intros b.
+  right.
+  exact b.
+- intros ab p ap bp.
+  destruct ab as [a | b].
+  apply ap.
+  exact a.
+  apply bp.
+  exact b.
+Qed.
+
+Lemma EX_exists (A : Type) (P : A -> Prop) : 
+ EX A P <-> exists a, P a.
+Proof.
+unfold EX.
+split.
+- intros p.
+  apply p. 
+  intros ap a.
+  exists ap.
+  exact a.
+- intros ea q aq.
+  destruct ea as [x y].
+  apply(aq x).
+  exact y.
+Qed.
+
+Lemma EQ_eq (A : Type) (a a' : A) : 
+ EQ _ a a' <-> a = a'.
+Proof.
+unfold EQ.
+split.
+- intros pa.
+  apply pa.
+  reflexivity.
+- intros eq.
+  intros p ap.
+  rewrite <-eq.
+  exact ap.
+Qed.
+
+Lemma subsidiaire (A:Prop) : 
+ ~~(A \/ ~ A).
+Proof.
+intros na.
+apply na.
+right.
+intros a.
+apply na.
+left.
+exact a.
+Qed.
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+

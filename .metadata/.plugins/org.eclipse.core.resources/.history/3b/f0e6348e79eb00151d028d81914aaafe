@@ -1,0 +1,40 @@
+package logicline.modeleSemantique;
+
+import java.util.Set;
+
+public class Non extends Formule {
+	
+	protected Formule formule;
+	
+	public Non(Formule f) {
+		this.formule = f;
+	}
+	
+	@Override
+	public String toString() {
+		return "¬ (" + this.formule.toString() + ")";
+	}
+
+	@Override
+	public Set<String> variablesLibres() {
+		this.libres.addAll(this.formule.variablesLibres());
+		return this.libres;
+	}
+
+	@Override
+	public Formule substitue(Substitution s) {
+		return new Non(this.formule.substitue(s));
+	}
+
+	@Override
+	public boolean valeur() throws VariableLibreException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	@Override
+	protected Formule negation() {
+		return this.formule;
+	}
+
+}
